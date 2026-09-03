@@ -748,6 +748,18 @@ body {
   text-decoration: underline;
 }
 
+.footer-contact-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.footer-divider {
+  color: var(--border-color);
+  font-size: 0.9rem;
+}
+
 /* ===== MOBILE RESPONSIVE — Phone (≤ 768px) ===== */
 @media (max-width: 768px) {
   /* Header */
@@ -1006,5 +1018,14 @@ body {
     align-items: center;
     text-align: center;
     gap: 8px;
+  }
+
+  .footer-contact-group {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .footer-divider {
+    display: none;
   }
 }

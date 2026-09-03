@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, MessageSquare, Trash2, Mail } from 'lucide-react';
+import { Plus, MessageSquare, Trash2, Mail, Phone } from 'lucide-react';
 
 export default function Sidebar({ files, activeFileId, onSelectFile, onNewFile, onDeleteFile, isOpen }) {
   return (
@@ -74,6 +74,14 @@ export default function Sidebar({ files, activeFileId, onSelectFile, onNewFile, 
         >
           <Mail size={14} />
           <span>vaisakhperumthody@gmail.com</span>
+        </a>
+        <a
+          href="tel:+919744449448"
+          className="sidebar-contact-info"
+          title="Call: +91 9744 449 448"
+        >
+          <Phone size={14} />
+          <span>+91 9744 449 448</span>
         </a>
       </div>
     </aside>
