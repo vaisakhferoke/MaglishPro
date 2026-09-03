@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, MessageSquare, Trash2 } from 'lucide-react';
+import { Plus, MessageSquare, Trash2, Mail } from 'lucide-react';
 
 export default function Sidebar({ files, activeFileId, onSelectFile, onNewFile, onDeleteFile, isOpen }) {
   return (
@@ -66,6 +66,14 @@ export default function Sidebar({ files, activeFileId, onSelectFile, onNewFile, 
         >
           <MessageSquare size={16} />
           Tell us your feedback
+        </a>
+        <a
+          href="mailto:vaisakhperumthody@gmail.com?subject=Contact%20-%20MaglishPro"
+          className="sidebar-contact-info"
+          title="Email: vaisakhperumthody@gmail.com"
+        >
+          <Mail size={14} />
+          <span>vaisakhperumthody@gmail.com</span>
         </a>
       </div>
     </aside>

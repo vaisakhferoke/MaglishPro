@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Mail } from 'lucide-react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import ManglishEditor from './components/ManglishEditor';
@@ -240,7 +241,17 @@ export default function App() {
           />
 
           <footer className="footer-copyright">
-            © 2025 DocManager. All rights reserved.
+            <div className="footer-content">
+              <span>© {new Date().getFullYear()} MaglishPro. All rights reserved.</span>
+              <a 
+                href="mailto:vaisakhperumthody@gmail.com?subject=Inquiry%20-%20MaglishPro" 
+                className="footer-contact-link"
+                title="Send Email to vaisakhperumthody@gmail.com"
+              >
+                <Mail size={14} />
+                <span>vaisakhperumthody@gmail.com</span>
+              </a>
+            </div>
           </footer>
         </main>
       </div>
