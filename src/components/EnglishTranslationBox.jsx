@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { 
   Languages, Undo, Redo, Bold, Italic, Underline, Type, Highlighter, 
   List, MoreVertical, Mic, Copy, Check 
@@ -7,8 +7,19 @@ import {
 export default function EnglishTranslationBox({ translationText, setTranslationText, onCopy, isCopied }) {
   const [fontSize, setFontSize] = useState(12);
   const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef(null);
 
-  const toggleVoiceTyping = () => {
+  // Clean up recognition on unmount
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+        recognitionRef.current = null;
+      }
+    };
+  }, []);
+
+  const toggleVoiceTyping = useCallback(() => {
     if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
       alert('Speech recognition is not supported in this browser.');
       return;
@@ -16,6 +27,10 @@ export default function EnglishTranslationBox({ translationText, setTranslationT
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (isListening) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+        recognitionRef.current = null;
+      }
       setIsListening(false);
       return;
     }
@@ -26,8 +41,14 @@ export default function EnglishTranslationBox({ translationText, setTranslationT
     recognition.continuous = true;
 
     recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => setIsListening(false);
-    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => {
+      recognitionRef.current = null;
+      setIsListening(false);
+    };
+    recognition.onerror = () => {
+      recognitionRef.current = null;
+      setIsListening(false);
+    };
 
     recognition.onresult = (event) => {
       const transcript = Array.from(event.results)
@@ -37,8 +58,9 @@ export default function EnglishTranslationBox({ translationText, setTranslationT
       setTranslationText(transcript);
     };
 
+    recognitionRef.current = recognition;
     recognition.start();
-  };
+  }, [isListening, setTranslationText]);
 
   return (
     <div className="editor-card">

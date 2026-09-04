@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   Undo, Redo, Bold, Italic, Underline, Type, Highlighter, 
   List, MoreVertical, Mic, Copy, Check 
@@ -62,10 +62,30 @@ export default function ManglishEditor({
   const [popoverPos, setPopoverPos] = useState({ top: 40, left: 20 });
   const [isListening, setIsListening] = useState(false);
   const textareaRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   const showSuggestions = activeLanguage === 'മലയാളം' && suggestions.length > 0;
 
   // Handle word-by-word transliteration lookup
+  // Stop recognition when switching away from Malayalam
+  useEffect(() => {
+    if (activeLanguage !== 'മലയാളം' && recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+      setIsListening(false);
+    }
+  }, [activeLanguage]);
+
+  // Clean up recognition on unmount
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+        recognitionRef.current = null;
+      }
+    };
+  }, []);
+
   useEffect(() => {
     if (activeLanguage !== 'മലയാളം') {
       return;
@@ -147,7 +167,7 @@ export default function ManglishEditor({
   };
 
   // Voice recognition toggle
-  const toggleVoiceTyping = () => {
+  const toggleVoiceTyping = useCallback(() => {
     if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
       alert('Speech recognition is not supported in this browser. Try Chrome/Edge!');
       return;
@@ -155,6 +175,10 @@ export default function ManglishEditor({
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (isListening) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+        recognitionRef.current = null;
+      }
       setIsListening(false);
       return;
     }
@@ -165,8 +189,14 @@ export default function ManglishEditor({
     recognition.continuous = true;
 
     recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => setIsListening(false);
-    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => {
+      recognitionRef.current = null;
+      setIsListening(false);
+    };
+    recognition.onerror = () => {
+      recognitionRef.current = null;
+      setIsListening(false);
+    };
 
     recognition.onresult = (event) => {
       const transcript = Array.from(event.results)
@@ -176,8 +206,9 @@ export default function ManglishEditor({
       setText(transcript);
     };
 
+    recognitionRef.current = recognition;
     recognition.start();
-  };
+  }, [isListening, activeLanguage, setText]);
 
   return (
     <div className="editor-card">

@@ -9,7 +9,7 @@ export default function Header({ isDarkMode, setIsDarkMode, toggleSidebar }) {
           <Menu size={20} />
         </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <h1 className="app-title">Dashboard</h1>
+          <h1 className="app-title">Manglish Pro</h1>
         </div>
       </div>
 
